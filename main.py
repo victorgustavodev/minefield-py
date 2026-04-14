@@ -20,7 +20,6 @@ class AppMinesweeperCar:
         self.jogando = False
         self.visitados = None 
         
-        # Correção do Caminho das Imagens (Pega a pasta exata deste script)
         diretorio_atual = os.path.dirname(os.path.abspath(__file__))
         self.imagens = {}
         
@@ -117,8 +116,7 @@ class AppMinesweeperCar:
             
             self.verificar_colisao()
             self.desenhar_mapa()
-            
-            # CORREÇÃO AQUI: Traz os efeitos (explosão/flash) para a frente do mapa!
+        
             self.canvas.tag_raise("efeito")
 
     def verificar_colisao(self):
@@ -130,7 +128,6 @@ class AppMinesweeperCar:
             destruido = self.carro.sofrer_dano()
             self.mapa.grid.obter(self.carro.y).definir(self.carro.x, 0)
             
-            # Adicionamos a tag "efeito" na imagem
             if 'bomba' in self.imagens:
                 ex_img = self.canvas.create_image(cx, cy, image=self.imagens['bomba'], tags="efeito")
                 self.root.after(600, lambda: self.canvas.delete(ex_img))
@@ -138,14 +135,13 @@ class AppMinesweeperCar:
                 self.animar_explosao(cx, cy, raio=5) 
             
             if destruido:
-                self.jogando = False # Trava os controles para o carro não sair de cima da explosão
+                self.jogando = False
                 self.root.after(600, lambda: self.finalizar_jogo(sucesso=False)) 
                 
         elif conteudo == 2: 
             self.carro.escudo += 1
             self.mapa.grid.obter(self.carro.y).definir(self.carro.x, 0)
             
-            # Adicionamos a tag "efeito" no brilho
             fundo = self.canvas.create_rectangle(0, 0, self.canvas.winfo_width(), self.canvas.winfo_height(), fill="cyan", stipple="gray25", tags="efeito")
             self.root.after(100, lambda: self.canvas.delete(fundo))
             
@@ -156,10 +152,8 @@ class AppMinesweeperCar:
         if raio > self.tamanho_celula * 1.5: return 
         cor = random.choice(["#e74c3c", "#d35400", "#f1c40f"])
         
-        # Adicionamos a tag "efeito" no círculo da animação
         explosao = self.canvas.create_oval(x-raio, y-raio, x+raio, y+raio, fill=cor, outline="", tags="efeito")
         
-        # Garante que os novos círculos animados fiquem no topo
         self.canvas.tag_raise("efeito") 
         
         self.root.after(50, lambda: self.canvas.delete(explosao))
